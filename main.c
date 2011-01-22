@@ -335,27 +335,28 @@ static void load_cart_id(void)
 #define DET_MODE(value,bit) (value << ((bit)*2))
 
 // Reggie added for julspower, autoboot if zimage is present on sd card
-int check_autoboot(void){
+int check_autoboot(char *cRet){
 //	WORD read_size;
-	char cReturn = 5;
 	char cNum = 0;
 	FATFS ffs;
 	FRESULT fres;
+
+	scRet = 5;
 	fres = pf_mount(&ffs);
 	if ( fres ) { return (fres<<16) | 1; }
 	fres = pf_open("auto");
 	if ( fres ) { return (fres<<16) | 2; }
 	//Since file exist try to read a valid number from it
-	fres = pf_read(&cReturn, 1, &cNum);
+	fres = pf_read(cRet, 1, &cNum);
 	if(fres == FR_OK)
 	{
-		cReturn -= 48;  //Have a number instead of ascii
-		if(cReturn > 5)
-			cReturn = 5;
-		if(cReturn < 0)
-			cReturn = 5;	
+		cRet -= 48;  //Have a number instead of ascii
+		if(cRet > 5)
+			cRet = 5;
+		if(cRet < 0)
+			cRet = 5;	
 	}
-  return cReturn;
+  return 0;
 }
 
 u8 do_menu(void)
@@ -524,6 +525,7 @@ int main(void)
 	char *cmdline = 0, *altcmdline = 0;
 	u32 kernel_nand_addr = 0, alt_kernel_nand_addr = 0;
 	int board_id;
+	char cRet = 0;
 	u32 ret = 0;
 	u32 ret2 = 0;
 	u8 selection = 0;
@@ -575,10 +577,10 @@ int main(void)
 
 // Reggie added for julspower, autoboot if zimage is present on the SD card.
 // Edited by julspower to load menu index
-ret2 = check_autoboot();
-if(ret2 < 6)
+ret2 = check_autoboot(&cRet);
+if(ret2 == 0)
 {
-	selection=ret2;
+	selection=cRet;
 	db_puts("\nAutobooting from menu index\n");
 	goto selection_section;
 }
@@ -616,7 +618,7 @@ selection_section:
 
 		db_puts("\nboot jmp\n");
 		
-		//load bootsplash to frame buffer by JulsPower
+		/*//load bootsplash to frame buffer by JulsPower
 		fres = pf_mount(&ffs);
 		if ( !fres ) 
 		{
@@ -625,7 +627,7 @@ selection_section:
 			{
 				fres = pf_read((u32 *)FRAME_BUFFER_ADDR, FRAME_BUFFER_SIZE, NULL);
 			}
-		}
+		}*/
 		
 		
 
