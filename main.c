@@ -343,7 +343,7 @@ int check_autoboot(void){
 	FRESULT fres;
 	fres = pf_mount(&ffs);
 	if ( fres ) { return (fres<<16) | 1; }
-	fres = pf_open("autoboottest");
+	fres = pf_open("auto");
 	if ( fres ) { return (fres<<16) | 2; }
 	//Since file exist try to read a valid number from it
 	fres = pf_read(&cReturn, 1, &cNum);
@@ -620,7 +620,7 @@ selection_section:
 		fres = pf_mount(&ffs);
 		if ( !fres ) 
 		{
-			fres = pf_open("bootsplash.rgb");
+			fres = pf_open("splash.rgb");
 			if(!fres)
 			{
 				fres = pf_read((u32 *)FRAME_BUFFER_ADDR, FRAME_BUFFER_SIZE, NULL);
