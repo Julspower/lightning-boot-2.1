@@ -337,13 +337,25 @@ static void load_cart_id(void)
 // Reggie added for julspower, autoboot if zimage is present on sd card
 int check_autoboot(void){
 //	WORD read_size;
+	char cReturn = 5;
+	char cNum = 0;
 	FATFS ffs;
 	FRESULT fres;
 	fres = pf_mount(&ffs);
 	if ( fres ) { return (fres<<16) | 1; }
-	fres = pf_open("autoboot");
+	fres = pf_open("autoboottest");
 	if ( fres ) { return (fres<<16) | 2; }
-  return 0;
+	//Since file exist try to read a valid number from it
+	fres = pf_read(&cReturn, 1, &cNum);
+	if(fres == FR_OK)
+	{
+		cReturn -= 48;  //Have a number instead of ascii
+		if(cReturn > 5)
+			cReturn = 5;
+		if(cReturn < 0)
+			cReturn = 5;	
+	}
+  return cReturn;
 }
 
 u8 do_menu(void)
@@ -561,11 +573,11 @@ int main(void)
 
 // Reggie added for julspower, autoboot if zimage is present on the SD card.
 ret2 = check_autoboot();
-if ( ret2 == 0 ){
-selection=5;
-db_puts("\nAutobooting zImage from SD\n");
-goto selection_section;
-
+if(ret2 < 7)
+{
+	selection=ret2;
+	db_puts("\nAutobooting from menu index\n");
+	goto selection_section;
 }
 
 		selection = do_menu();

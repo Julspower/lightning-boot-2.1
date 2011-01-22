@@ -39,7 +39,7 @@ CFLAGS += -DCONFIGURE_CLOCKS
 #CFLAGS += -DCHECK_KERNEL_CRC
 
 #PLATFORM_LIBS = -L/opt/toolchain_didj/toolchain/arm-opendidj-linux-uclibcgnueabi/lib/gcc/arm-opendidj-linux-uclibcgnueabi/4.1.2 -lgcc -lgcc_eh
-PLATFORM_LIBS = -L/media/Storage/toolchain_didj/toolchain/arm-opendidj-linux-uclibcgnueabi/lib/gcc/arm-opendidj-linux-uclibcgnueabi/4.1.2 -lgcc -lgcc_eh
+PLATFORM_LIBS = -L/usr/DidiKernel/RidgeRun/arm-eabi-uclibc/lib/gcc/arm-linux-uclibcgnueabi/4.1.1 -lgcc -lgcc_eh
 # CFLAGS += -save-temps
 
 LINUX_FILES=include/autoconf.h include/mach-types.h include/dpc_hal.h \
