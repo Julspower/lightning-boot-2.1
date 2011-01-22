@@ -517,7 +517,7 @@ char cmdline_txt[255];
 int main(void)
 {
 	u32 rootfs;
-	u8 *load_address;s
+	u8 *load_address;
 	char *rfs_txt;
 	u32 image = 0;
 	struct jffs2_raw_inode *node, *mfg_node;
@@ -528,6 +528,8 @@ int main(void)
 	u32 ret2 = 0;
 	u8 selection = 0;
 	u8 displayOn = 0;
+	FATFS ffs;
+	FRESULT fres;
 
 #ifdef CPU_LF1000
 	/* disable the USB controller */
@@ -572,8 +574,9 @@ int main(void)
 		UART16(UARTCLKGEN) = ((UARTDIV-1)<<UARTCLKDIV)|(UART_PLL<<UARTCLKSRCSEL);
 
 // Reggie added for julspower, autoboot if zimage is present on the SD card.
+// Edited by julspower to load menu index
 ret2 = check_autoboot();
-if(ret2 < 7)
+if(ret2 < 6)
 {
 	selection=ret2;
 	db_puts("\nAutobooting from menu index\n");
@@ -612,7 +615,21 @@ selection_section:
 		if ( ret != 0 ) guru_med(selection,ret);
 
 		db_puts("\nboot jmp\n");
-		/* jump to u-boot */
+		
+		//load bootsplash to frame buffer by JulsPower
+		fres = pf_mount(&ffs);
+		if ( !fres ) 
+		{
+			fres = pf_open("bootsplash.rgb");
+			if(!fres)
+			{
+				fres = pf_read((u32 *)FRAME_BUFFER_ADDR, FRAME_BUFFER_SIZE, NULL);
+			}
+		}
+		
+		
+
+		/* jump to u-boot Load uboot addr contain*/
 		((void (*)( int r0, int r1, int r2))load_address)
 			(0, MACH_TYPE_LF1000, 0);
 
@@ -785,7 +802,8 @@ normal_boot:
 	image = load_kernel(cmdline);
 	}
 	db_stopwatch_stop();
-	if(image == 0) {
+	if(image == 0) 
+	{
 		db_puts("Warning: booting alternative kernel!\n");
 		if(tfs_load_summary(sum_buffer, alt_kernel_nand_addr) != 0) {
 			guru_med(0xA0000000,2);
