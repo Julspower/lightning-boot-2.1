@@ -517,7 +517,7 @@ char cmdline_txt[255];
 int main(void)
 {
 	u32 rootfs;
-	u8 *load_address;
+	u8 *load_address;s
 	char *rfs_txt;
 	u32 image = 0;
 	struct jffs2_raw_inode *node, *mfg_node;
