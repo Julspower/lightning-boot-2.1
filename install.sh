@@ -11,7 +11,7 @@ check_vars
 
 set_standard_opts $*
 
-pushd $PROJECT_PATH/lightning-boot-2.0/
+pushd /usr/DidiKernel/lightning-boot-2.1/
 
 if [ "$CLEAN" == "1" ]; then
 	make clean
@@ -43,7 +43,7 @@ cp $LINUX_DRIVERS/pwm/pwm_hal.h ./include/
 UBOOT_SUPPORT=$UBOOTLOADERS KERNELDIR=$KERNELDIR CROSS_COMPILE=$CROSS_COMPILE make 
 
 # echo "" >> lightning-boot.bin
-VERSION=`grep "CURRENT_MAJOR_VERSION=" ../packages/version/install.sh | cut -d = -f 2`
+#VERSION=`grep "CURRENT_MAJOR_VERSION=" ../packages/version/install.sh | cut -d = -f 2`
 # BUILD=`svn info $PROJECT_PATH | grep Revision | awk '{print $2}'`
 # BUILD=1337
 # echo "VERSION:$VERSION.$BUILD" >> lightning-boot.bin

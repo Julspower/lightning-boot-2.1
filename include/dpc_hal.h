@@ -49,28 +49,6 @@
 #define DPCCLKGEN0		0x1C4
 #define DPCCLKGEN1		0x1C8
 
-/* DPC registers for internal video encoder as offsets from DPC_BASE */
-
-#define VENCCTRLA		0x002 
-#define VENCCTRLB		0x004 
-#define VENCSCH 		0x008 
-#define VENCHUE 		0x00A 
-#define VENCSAT 		0x00C 
-#define VENCCRT 		0x00E 
-#define VENCBRT 		0x010 
-#define VENCFSCADJH		0x012 
-#define VENCFSCADJL		0x014 
-#define VENCDACSEL		0x020 
-#define VENCICNTL		0x040 
-#define VENCHSVS0		0x048 
-#define VENCHSOS		0x04A 
-#define VENCHSOE		0x04C 
-#define VENCVSOS		0x04E 
-#define VENCVSOE		0x050  
-#define DPUPSCALECON0	0x0A4
-#define DPUPSCALECON1	0x0A6
-#define DPUPSCALECON2	0x0A8
-
 /* DPC CONTROL 0 REGISTER (DPCCTRL0) */
 #define DPCENB		15
 #define ENCENB		14

@@ -8,7 +8,7 @@ LDFLAGS = -static --architecture armv5te -EL -M -Map lightning-boot.map -e Start
 CFLAGS += -Iinclude/arch-lf1000
 
 # release version
-CFLAGS += -DLB_VERSION=\"1.6p1\"
+CFLAGS += -DLB_VERSION=\"2.0J\"
 
 # Self-bootstrap
 CFLAGS += -DSELF_BOOTSTRAP

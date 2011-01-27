@@ -335,26 +335,22 @@ static void load_cart_id(void)
 #define DET_MODE(value,bit) (value << ((bit)*2))
 
 // Reggie added for julspower, autoboot if zimage is present on sd card
-int check_autoboot(char *cRet){
+int check_autoboot(unsigned char *cSel){
 //	WORD read_size;
-	char cNum = 0;
 	FATFS ffs;
 	FRESULT fres;
 
-	scRet = 5;
 	fres = pf_mount(&ffs);
 	if ( fres ) { return (fres<<16) | 1; }
-	fres = pf_open("auto");
+	fres = pf_open("autoboot");
 	if ( fres ) { return (fres<<16) | 2; }
 	//Since file exist try to read a valid number from it
-	fres = pf_read(cRet, 1, &cNum);
+	fres = pf_read(cSel, 1, NULL);
 	if(fres == FR_OK)
 	{
-		cRet -= 48;  //Have a number instead of ascii
-		if(cRet > 5)
-			cRet = 5;
-		if(cRet < 0)
-			cRet = 5;	
+		*cSel -= 48;  //Have a number instead of ascii
+		if(*cSel > 5)
+			*cSel = 5;	
 	}
   return 0;
 }
@@ -525,13 +521,11 @@ int main(void)
 	char *cmdline = 0, *altcmdline = 0;
 	u32 kernel_nand_addr = 0, alt_kernel_nand_addr = 0;
 	int board_id;
-	char cRet = 0;
 	u32 ret = 0;
 	u32 ret2 = 0;
 	u8 selection = 0;
 	u8 displayOn = 0;
-	FATFS ffs;
-	FRESULT fres;
+	unsigned char cSel;
 
 #ifdef CPU_LF1000
 	/* disable the USB controller */
@@ -576,12 +570,11 @@ int main(void)
 		UART16(UARTCLKGEN) = ((UARTDIV-1)<<UARTCLKDIV)|(UART_PLL<<UARTCLKSRCSEL);
 
 // Reggie added for julspower, autoboot if zimage is present on the SD card.
-// Edited by julspower to load menu index
-ret2 = check_autoboot(&cRet);
-if(ret2 == 0)
+ret2 = check_autoboot(&cSel);
+if ( ret2 == 0 )
 {
-	selection=cRet;
-	db_puts("\nAutobooting from menu index\n");
+	selection=cSel;
+	db_puts("\nAutobooting zImage from SD\n");
 	goto selection_section;
 }
 
@@ -617,21 +610,8 @@ selection_section:
 		if ( ret != 0 ) guru_med(selection,ret);
 
 		db_puts("\nboot jmp\n");
-		
-		/*//load bootsplash to frame buffer by JulsPower
-		fres = pf_mount(&ffs);
-		if ( !fres ) 
-		{
-			fres = pf_open("splash.rgb");
-			if(!fres)
-			{
-				fres = pf_read((u32 *)FRAME_BUFFER_ADDR, FRAME_BUFFER_SIZE, NULL);
-			}
-		}*/
-		
-		
 
-		/* jump to u-boot Load uboot addr contain*/
+		/* jump to u-boot */
 		((void (*)( int r0, int r1, int r2))load_address)
 			(0, MACH_TYPE_LF1000, 0);
 
@@ -804,8 +784,7 @@ normal_boot:
 	image = load_kernel(cmdline);
 	}
 	db_stopwatch_stop();
-	if(image == 0) 
-	{
+	if(image == 0) {
 		db_puts("Warning: booting alternative kernel!\n");
 		if(tfs_load_summary(sum_buffer, alt_kernel_nand_addr) != 0) {
 			guru_med(0xA0000000,2);
